@@ -1,0 +1,110 @@
+---
+title: "hw02_Weiting_Gu"
+author: "Weiting"
+date: "2018Äê9ÔÂ26ÈÕ"
+output: 
+  html_document:
+    keep_md: true
+---
+
+
+```{r, echo=FALSE, warning = FALSE, message=FALSE}
+# install.packages("tidyr")
+# install.packages("dplyr")
+# install.packages("readr")
+library(readr)
+df1 = read_csv("U.S._Chronic_Disease_Indicators__CDI_.csv", quote = "")
+```
+
+```{r, echo=FALSE, warning = FALSE, message=FALSE}
+library(dplyr, warn.conflicts = FALSE)
+library(tidyr, warn.conflicts = FALSE)
+filteredData1 <- df1 %>%
+  filter(df1$Question == "Binge drinking prevalence among adults aged >= 18 years") %>%
+  filter(DataValueType == "Crude Prevalence")
+filteredData2  <- filteredData1 %>%
+  filter(Stratification1 == "Overall"| Stratification1 == "Male" | Stratification1 == "Female")
+SelectedData1 <- filteredData2[,c("YearStart", "LocationAbbr", "LocationDesc", "Question", "DataValue", "Stratification1")]
+SpreadData1 = spread(SelectedData1, key = Stratification1, value = DataValue)
+
+```
+
+
+```{r, echo=FALSE, warning = FALSE, message=FALSE}
+filteredData5 <- df1 %>%
+  filter(df1$Question == "Poverty") %>%
+  filter(DataValueType == "Crude Prevalence")
+filteredData4 <- filteredData5 %>%
+  filter(filteredData5$StratificationCategory1 == "Overall") 
+SelectedData2 <- filteredData4[,c("YearStart", "LocationAbbr", "LocationDesc", "Question", "DataValue")]
+```
+
+
+```{r, echo=FALSE,warning = FALSE, message=FALSE}
+CombinedData1 <- full_join(SpreadData1, SelectedData2, by = c("YearStart", "LocationAbbr", "LocationDesc"))
+names(CombinedData1) <- c("year", "stateabb", "state", "Q1", "binge_female", "binge_male", "binge_all","Q2", "poverty")
+CombinedData1$Q1 <- NULL
+CombinedData1$Q2 <- NULL
+
+binge_clean <- CombinedData1[,c("state", "stateabb","year","binge_all","binge_male", "binge_female", "poverty")] %>%
+  filter(state != "United States")
+write.csv(binge_clean, "binge_clean.csv")
+
+```
+
+## Top 10 binge drinking states
+
+```{r,echo=FALSE}
+OverallBinge <- binge_clean %>%
+  filter(year == max(binge_clean$year)) %>%
+  dplyr::select(state, stateabb,binge_all, binge_male, binge_female) %>%
+  arrange(desc(binge_all)) %>%
+  head(10)
+OverallBinge
+```
+
+## Scatter plot between the overall poverty prevalence and the prevalence of overall binge drinking in Maryland
+
+```{r,echo=FALSE,warning = FALSE, message=FALSE}
+# install.packages("ggplot2)
+library(ggplot2)
+df2 <- binge_clean %>%
+  filter(state =="Maryland")
+ggplot(df2, aes(x=poverty, y=binge_all)) +
+    geom_point(shape=1) +  
+    geom_smooth(method = "loess", formula = "y~x")
+```
+
+From the curve in the plot we could view a slight positive correlation between the overall poverty prevalence and the prevalence of overall binge drinking in Maryland. The more poverty prevalence we have in Maryland, the more binge drinking prevalence could be viewed in the overall population.
+
+## Considering average annual growth rate
+
+```{r,echo=FALSE,warning = FALSE, message=FALSE}
+groupeddata <- binge_clean %>%
+  arrange(state)
+growthrate <- binge_clean %>%
+  filter(year != "2010") %>%
+  arrange(desc(year)) %>%
+  dplyr::group_by(state) %>%
+  summarize((first(binge_all) - last(binge_all))/last(binge_all)/(max(year)-min(year)))
+names(growthrate) <- c("state", "growth_rate_in_percentage")
+growthrate$growth_rate_in_percentage <- 100*growthrate$growth_rate_in_percentage
+growthrate <- na.omit(growthrate)
+```
+
+#### Top 5 states with the largest increases in binge drinking prevalence
+```{r,echo=FALSE,warning = FALSE, message=FALSE}
+top5in <- growthrate %>%
+  arrange(desc(growth_rate_in_percentage)) %>%
+  head(5)
+top5in
+```
+
+#### Top 5 states with the largest decreases in binge drinking prevalence
+```{r,echo=FALSE,warning = FALSE, message=FALSE}
+top5de <- growthrate %>%
+  arrange(growth_rate_in_percentage) %>%
+  head(5)
+top5de
+```
+

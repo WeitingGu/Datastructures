@@ -1,0 +1,74 @@
+---
+title: "hw01-5072"
+author: "Weiting"
+date: "2018Äê9ÔÂ20ÈÕ"
+output: 
+  html_document:
+    keep_md: true
+---
+> The data frame we are going to explore today is nba_draft_2015 (Projecting The Top 50 Players In The 2015 NBA Draft Class).
+
+For what NBA stands for, see the footnote[^1] .
+```{r force = TRUE, echo=FALSE}
+# install.packages("devtools")
+# devtools::install_github("rudeboybert/fivethirtyeight")
+library(fivethirtyeight)
+```
+
+nba_draft_2015 from fivethrityeight is basically the raw data behind the story ["Projecting The Top 50 Players In The 2015 NBA Draft Class"](https://fivethirtyeight.com/features/projecting-the-top-50-players-in-the-2015-nba-draft-class/). An analysis using this data was contributed by G. Elliott Morris as a [package vignette](http://fivethirtyeight-r.netlify.com/articles/nba.html).
+
+It is a data frame with 1090 rows representing National Basketball Association players/prospects and 9 variables.
+Here we can find some descriptions about the variables.
+```{r, echo=FALSE}
+variable_name <- c("player", "position", "id", "draft_year", "projected_spm", "superstar", "starter", "role_player", "bust")
+variable_description <- c("Player name","The player's position","The player's identification code","The year the player was eligible for the NBA draft","projected statistical -/+ over yrs 2-5 of NBA career", "Probability of becoming a superstar player ", "Probability of becoming a starting-caliber player", "Probability of becoming a role player","Probability of becoming a bust")
+variables_df <- data.frame(variable_name, variable_description)
+variables_df
+
+```
+### Here is a summary of the data frame:
+```{r, echo = FALSE}
+summary(nba_draft_2015)
+```
+### Here is an interactive and a non-interative table of the data frame:
+
+```{r,echo=FALSE}
+# install.packages("DT")
+library(DT)
+datatable(nba_draft_2015)
+```
+
+```{r,echo=FALSE}
+# install.packages("knitr")
+library(knitr)
+kable(nba_draft_2015[1:15,], row.names = NA, col.names = NA)
+```
+
+### Equation:
+In this data dataframe we can do some simple calculations. 
+If we know the bust data (A person's probability of becoming a bust), then the equation$Nonbust = 1 - bust$ would help us to know the a person's probability of not becoming a bust.
+
+### Plotting:
+Here we could draw a histogram of players' probability of becoming a bust.
+```{r, echo=FALSE}
+# install.packages("ggplot2")
+library(ggplot2)
+hist(nba_draft_2015$bust)
+```
+
+### By the way...
+By the way, who is your favorite NBA star?
+
+Mine is Stephen Curry:)
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/Stephen_Curry.jpg")
+```
+
+#### Now we have finish our exploration of the data frame. Great job!
+
+```{r, echo=FALSE}
+knitr::include_graphics("images/WOW.jpg")
+```
+
+[^1]: NBA stands for the National Basketball Association, a men's professional basketball league in North America
