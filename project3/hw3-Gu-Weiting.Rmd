@@ -1,0 +1,122 @@
+---
+title: "hw03-Gu-Weiting"
+author: "Weiting"
+date: "2018Äê10ÔÂ6ÈÕ"
+output:   
+  html_document:
+    keep_md: true
+---
+
+## 1.Beer Song
+
+#### a.
+```{r echo=TRUE, results='hide'}
+for (i in 99:0){
+  if (any(i==99:3)){
+  cat(i,"bottles of beer on the wall,",i,"bottles of beer.
+Take one down, pass it around,",i-1,"bottles of beer on the wall...\n")
+  } else if (i==2){
+  cat(i,"bottles of beer on the wall,",i,"bottles of beer.
+Take one down, pass it around,",i-1,"bottle of beer on the wall...\n")
+  } else if (i==1){
+  cat(i,"bottle of beer on the wall,",i,"bottle of beer.
+Take one down, pass it around, No more bottle of beer on the wall...\n")
+  } else {
+  cat("No more bottles of beer on the wall, no more bottles of beer.
+Go to the store and buy some more, 99 bottles of beer on the wall..")
+  }
+}
+```
+
+Print steps 99 to 95
+```{r}
+for (i in 99:95){
+  cat(i,"bottles of beer on the wall,",i,"bottles of beer.
+Take one down, pass it around,",i-1,"bottles of beer on the wall...\n")
+}
+```
+
+
+#### b.
+
+```{r}
+song <-function(a=99, liquid="beer"){
+  cat(a,"bottles of", liquid,"on the wall,",a,"bottles of",liquid,".
+Take one down, pass it around,",a-1,"bottles of",liquid,"on the wall...\n")
+}
+song(3,liquid = "Whiskey")
+```
+
+#### c.
+
+```{r}
+song <-function(a=99, liquid="beer"){
+  if (is.numeric(a)==TRUE){
+  cat(a,"bottles of", liquid,"on the wall,",a,"bottles of",liquid,".
+Take one down, pass it around,",a-1,"bottles of",liquid,"on the wall...\n")
+  } else {
+    print("Warining: You passed a non-numeric input to the number of bottles")
+  }
+}
+```
+
+#### d.
+```{r}
+song <-function(a=99,vessel="bottles",liquid="beer",surface="wall"){
+  cat(a, vessel,"of", liquid,"on the",surface,",",a, vessel,"of",liquid,".\n
+Take one down, pass it around,",a-1, vessel,"of",liquid,"on the",surface,"...\n")
+}
+song(3, vessel="jugs",liquid="milk", surface="shelf")
+```
+
+
+## 2. Draw a plot using a loop
+
+#### a.
+```{r}
+plot(1,type="n", xlab="", ylab="", xlim = c(0, 10), ylim = c(0,10))
+for (i in 0:10){
+  lines(c(0,10),c(i,i),type = "l")
+}
+```
+
+#### b.
+```{r}
+plot(1,type="n", xlab="", ylab="", xlim = c(0, 10), ylim = c(0,10))
+for (i in 0:10){
+  lines(c(0,10),c(i,i),type = "l")
+  lines(c(i,i),c(0,10),type = "l")
+}
+```
+
+#### c.
+```{r}
+plot(1,type="n", xlab="", ylab="", xlim = c(0, 10), ylim = c(0,10))
+for (i in 0:10){
+  lines(c(0,10),c(i,i),type = "l")
+  lines(c(i,i),c(0,10),type = "l")
+  points(x=i,y=i)
+  points(x=i,y=10-i)
+}
+
+```
+
+#### d.
+```{r}
+myplot <- function(a=10, horizontal=FALSE, vertical=FALSE, diagonal =FALSE){
+plot(1,type="n", xlab="", ylab="", xlim = c(0, a), ylim = c(0,a))
+for (i in 0:a){
+  if (horizontal ==TRUE){
+      lines(c(0,a),c(i,i),type = "l")
+  }
+  if (vertical ==TRUE){
+      lines(c(i,i),c(0,a),type = "l")
+  }
+  if (diagonal == TRUE){
+  points(x=i,y=i)
+  points(x=i,y=a-i)
+  }
+}
+}
+```
+
